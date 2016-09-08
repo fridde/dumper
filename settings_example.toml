@@ -1,0 +1,12 @@
+[Connection_Details]
+
+	db_host =  'localhost'
+	db_name = 'testdatabase'
+	db_username = 'root'
+	db_password = ''
+
+[smtp_settings]
+	host = 'your.smtp.server.com'
+	username = 'info@yourdomain.com'
+	password = 'yourSMTPpassword'
+	from = 'your@adress.com'
