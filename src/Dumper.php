@@ -1,12 +1,12 @@
 <?php
 	namespace Fridde;
-	
+
 	class Dumper extends \MySQLDump
 	{
 		public $conn_settings;
 		public $file_name;
 		public $configuration_file = "settings.toml";
-		
+
 		public function __construct(){
 			$this->setConfiguration();
 			$c = $this->conn_settings;
@@ -14,10 +14,10 @@
 			$this->connection = new \mysqli($c["db_host"], $c["db_username"], $c["db_password"], $c["db_name"]);
 			parent::__construct($this->connection);
 		}
-		
+
 		private function setConfiguration()
 		{
-			
+
 			$file_name = $this->configuration_file;
 			$toml_class = "Yosymfony\Toml\Toml";
 			if(is_readable($file_name)){
@@ -34,17 +34,17 @@
 				throw new \Exception("File <" . $file_name . "> not readable or doesn't exist.");
 			}
 		}
-		
+
 		public function export()
 		{
 			$this->save("temp/" . $this->file_name);
 		}
-		
+
 		public function import()
 		{
 			$sql_text = file_get_contents("temp/" . $this->file_name);
 			$result = $this->connection->multi_query($sql_text);
 			var_dump($result);
 		}
-		
-	}						
+
+	}
