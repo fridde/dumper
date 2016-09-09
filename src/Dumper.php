@@ -4,45 +4,34 @@
 	class Dumper extends \MySQLDump
 	{
 		public $conn_settings;
-		public $file_name;
-		public $configuration_file = "settings.toml";
+		public $dumped_file_name;
 
-		public function __construct(){
-			$this->setConfiguration();
+		public function __construct($settings = null){
+			$this->setConfiguration($settings);
 			$c = $this->conn_settings;
-			$this->file_name = $c["db_name"] . ".sql";
+			$this->dumped_file_name = $c["db_name"] . ".sql";
 			$this->connection = new \mysqli($c["db_host"], $c["db_username"], $c["db_password"], $c["db_name"]);
 			parent::__construct($this->connection);
 		}
 
-		private function setConfiguration()
+		private function setConfiguration($settings = null)
 		{
-
-			$file_name = $this->configuration_file;
-			$toml_class = "Yosymfony\Toml\Toml";
-			if(is_readable($file_name)){
-				if(class_exists($toml_class)){
-					$parseFunction = $toml_class . "::Parse";
-					$local_conn_settings = $parseFunction($file_name);
-					$this->conn_settings = $local_conn_settings["Connection_Details"];
-				}
-				else {
-					throw new \Exception("Tried to parse a toml-configuration file without a parser class defined.");
-				}
-			}
-			else {
-				throw new \Exception("File <" . $file_name . "> not readable or doesn't exist.");
+			$local_conn_settings = $settings ?? ($GLOBALS["SETTINGS"] ?? false);
+			if($local_conn_settings == false){
+				throw new \Exception("No settings given or found in the global scope");
+			} else {
+				$this->conn_settings = $local_conn_settings["Connection_Details"];
 			}
 		}
 
 		public function export()
 		{
-			$this->save("temp/" . $this->file_name);
+			$this->save("temp/" . $this->dumped_file_name);
 		}
 
 		public function import()
 		{
-			$sql_text = file_get_contents("temp/" . $this->file_name);
+			$sql_text = file_get_contents("temp/" . $this->dumped_file_name);
 			$result = $this->connection->multi_query($sql_text);
 			var_dump($result);
 		}
