@@ -9,7 +9,7 @@
 		public function __construct($settings = null){
 			$this->setConfiguration($settings);
 			$c = $this->conn_settings;
-			$this->dumped_file_name = $c["db_name"] . ".sql";
+			$this->dumped_file_name =  $c["db_name"] . "_" . date("Y-m-d") . ".sql";
 			$this->connection = new \mysqli($c["db_host"], $c["db_username"], $c["db_password"], $c["db_name"]);
 			parent::__construct($this->connection);
 		}
@@ -26,7 +26,7 @@
 
 		public function export()
 		{
-			$this->save("temp/" . $this->dumped_file_name);
+			$this->save("backup/" . $this->dumped_file_name);
 		}
 
 		public function import()
