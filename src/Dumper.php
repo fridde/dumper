@@ -1,7 +1,9 @@
 <?php
 	namespace Fridde;
 
-	class Dumper extends \MySQLDump
+	use Carbon\Carbon;
+
+    class Dumper extends \MySQLDump
 	{
 	    public $conn_settings;
 		public $dumped_file_name;
@@ -10,7 +12,7 @@
 		public function __construct($settings = null){
 			$this->setConfiguration($settings);
 			$c = $this->conn_settings;
-			$this->dumped_file_name =  $c['db_name'] . '_' . date('Y-m-d') . '.sql';
+			$this->dumped_file_name =  Carbon::today()->toDateString() . '_' . $c['db_name'] . '.sql';
 			$this->local_connection = new \mysqli($c['db_host'], $c['db_username'], $c['db_password'], $c['db_name']);
 			parent::__construct($this->local_connection);
 		}
