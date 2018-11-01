@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=7.0.0",        
-        "dg/mysql-dump": "1.3 - 1.4",
+        "dg/mysql-dump": "1.4.0",
         "nesbot/carbon": "~2.5"
     },
 	"autoload": {
