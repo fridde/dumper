@@ -6,10 +6,11 @@
     class Dumper extends \MySQLDump
 	{
 	    public $conn_settings;
+        public $backup_dir;
 		public $dumped_file_name;
 		public $local_connection;
 
-		public function __construct($settings = null){
+		public function __construct(array $settings){
 			$this->setConfiguration($settings);
 			$c = $this->conn_settings;
 			$this->dumped_file_name =  Carbon::today()->toDateString() . '_' . $c['db_name'] . '.sql';
@@ -17,24 +18,20 @@
 			parent::__construct($this->local_connection);
 		}
 
-		private function setConfiguration($settings = null)
+		private function setConfiguration(array $settings)
 		{
-			$local_conn_settings = $settings ?? ($GLOBALS['SETTINGS'] ?? false);
-			if($local_conn_settings === false){
-				throw new \Exception('No settings given or found in the global scope');
-			}
-
-            $this->conn_settings = $local_conn_settings['Connection_Details'];
+		    $this->backup_dir = $settings['backup_dir'];
+            $this->conn_settings = $settings['Connection_Details'];
         }
 
 		public function export()
 		{
-			$this->save('backup/' . $this->dumped_file_name);
+			$this->save($this->backup_dir . '/' . $this->dumped_file_name);
 		}
 
 		public function import()
 		{
-			$sql_text = file_get_contents('temp/' . $this->dumped_file_name);
+			$sql_text = file_get_contents($this->backup_dir . '/../temp/' . $this->dumped_file_name);
 			$result = $this->local_connection->multi_query($sql_text);
 			echo $result;
 		}
